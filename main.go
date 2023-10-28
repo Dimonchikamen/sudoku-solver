@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -34,7 +35,30 @@ func main() {
 	}
 
 	result := solveSudoku(sudoku)
-	println(result)
+	resultText := ""
+	for row := 0; row < len(result); row++ {
+		line := "|"
+		for col := 0; col < len(result); col++ {
+			line += strconv.Itoa(result[row][col])
+			if col > 0 && (col+1)%3 == 0 {
+				line += "|"
+			} else {
+				line += " "
+			}
+		}
+		resultText += line + "\n"
+	}
+	ext := filepath.Ext(path)
+	file, err := os.Create(strings.TrimSuffix(path, ext) + "_solved.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(resultText[:len(resultText)-1])
+	if err != nil {
+		panic(err)
+	}
 }
 
 func solveSudoku(puzzle [][]int) [][]int {
